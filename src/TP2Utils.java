@@ -94,16 +94,24 @@ public class TP2Utils {
     */
    public static boolean neContientQueDesChiffres (String chaine) {
 
+      boolean chaineVide = chaine == null || chaine.isEmpty();
       boolean reponse = true;
+      int tailleDeChaine;
+      int compteur = 0;
+      char caracCourant;
 
-      if (chaine.equals("") || chaine.isEmpty() )
+      if (chaineVide)
          reponse = false;
       else {
-         for (Character c : chaine.toCharArray()) {
-            if(!estUnCarNum(c))
-               return false;
+         tailleDeChaine = chaine.length();
+         while (reponse && compteur < tailleDeChaine) {
+            caracCourant = chaine.charAt(compteur);
+            if (!estUnCarNum(caracCourant))
+               reponse = false;
+            compteur++;
          }
       }
+
       return reponse;
    }
    
@@ -118,8 +126,8 @@ public class TP2Utils {
     */
    public static int contientNCar (String chaine, char car) {
 
-      int reponse  = 0;
-      boolean chaineVide = chaine.equals("") || chaine.isEmpty();
+      int reponse = 0;
+      boolean chaineVide = chaine == null || chaine.isEmpty();
 
       if(!chaineVide) {
          for (Character carac : chaine.toCharArray()){
@@ -127,6 +135,7 @@ public class TP2Utils {
                reponse++;
          }
       }
+
       return reponse;
    }
    
@@ -163,13 +172,14 @@ public class TP2Utils {
     */
    public static boolean estAlphaNumPlus (String chaine, String plus) {
 
-      char car = 'a';
+      boolean chaineVide = chaine == null || chaine.isEmpty();
       boolean reponse = true;
       boolean boolPlus = false;
       boolean boolChiffre;
       boolean boolLettre;
+      char caractereCourant;
 
-      if(chaine == null || chaine.isEmpty()) {
+      if(chaineVide) {
          reponse = false;
       } else {
          /*
@@ -179,18 +189,23 @@ public class TP2Utils {
          for(int  i = 0 ; i < chaine.length() && reponse ; i++) {
 
             //Recupérer le caractère courant
-            car = chaine.charAt(i);
+            caractereCourant = chaine.charAt(i);
 
             //Teste si le caractère courant est un chiffre
-            boolChiffre = estUnCarNum(car);
+            boolChiffre = estUnCarNum(caractereCourant);
 
             //Teste si le caractère courant est une lettre
-            boolLettre = estUneLettre(car);
+            boolLettre = estUneLettre(caractereCourant);
 
-            //Teste si le caractère courant est parmi 'plus'
+            /*
+             *Teste si le caractère courant est parmi 'plus'
+             * boolChiffre et boolLettre sont égaux dans un
+             * seul cas, lorsque tout deux faux soit un
+             * caractère qui n'est ni une lettre, ni un chiffre
+             */
             if(!(plus == null || plus.isEmpty())) {
                if(boolChiffre == boolLettre)
-                  boolPlus = estUnCaracParmi(car,plus);
+                  boolPlus = estUnCaracParmi(caractereCourant,plus);
             }
             /*
              *Teste si le caractère n'appartient ni au chiffre,
@@ -204,28 +219,30 @@ public class TP2Utils {
    }
 
    /**
-    * Cette methode recoit un caractere(car) et une chaine de caractère(plus) et
-    * doit évaluer si (car) est contenu dans (plus)
+    * Cette methode recoit un caractere et une chaine de caractère et
+    * doit évaluer si le caractere est contenue dans la chaine
     *
-    * @param car le caractere à evaluer.
-    * @param plus une chaine de caracteres que peut contenir car, en plus
-    *     *        des lettres et des caracteres numeriques.
-    * @return true si le caractère(car) donnee est inclue dans la chaine plus.
+    * @param caractere le caractere à evaluer.
+    * @param chaine une chaine de caracteres que peut contenir 'caractere',
+    *               en plus des lettres et des caracteres numeriques.
+    * @return true si le caractère donnee est inclue dans la chaine plus,
+    * sinon false.
     *
-    * On suppose ici que 'plus' et 'car' ne sont ni vide ni nul.
+    * On suppose ici que 'caractere' et 'chaine' ne sont ni vide ni nul.
     */
-   private static boolean estUnCaracParmi(char car , String plus) {
+   private static boolean estUnCaracParmi(char caractere , String chaine) {
 
-      byte compteurPlus = 0;
       boolean reponse = false;
-      byte taillePlus = (byte) plus.length();
+      int tailleDeLaChaine = chaine.length();
+      int positionCaracCourant = 0;
 
-      while (compteurPlus < taillePlus) {
-         Character carPlus = plus.charAt(compteurPlus);
-         if(carPlus.equals(car))
+      while (positionCaracCourant < tailleDeLaChaine) {
+         Character caracCourant = chaine.charAt(positionCaracCourant);
+         if(caracCourant.equals(caractere))
             reponse = true;
-         compteurPlus++;
+         positionCaracCourant++;
       }
+
       return reponse;
    }
 
@@ -311,7 +328,7 @@ public class TP2Utils {
     *
     * Exemple : obtenirInfoAvecPosition(2,"3|lord|melanie|aucun|aucun")
     * doit retourner melanie car troisième element de la chaine de caractère
-    * séparé par des "|"
+    * en commancant par 0 séparé par des "|".
     *
     * @param position la position de l'information a récuperer dans contactLigne
     *                 (O etant le premier element).
@@ -485,7 +502,7 @@ public class TP2Utils {
    }
 
    /**
-    * Cette methode trouve le numero de la ligne avant quoi inserer
+    * Cette methode trouve le numero de la ligne apres quoi inserer
     * le contact. Carnet etant un tableau triée par ordre alphabétique
     * des noms de contact, cette methode trouve la postion de la ligne
     * avant quoi le nouveau contact doit etre inseré.
@@ -536,9 +553,11 @@ public class TP2Utils {
     */
    private static int obtenirIndexNiemeChar(String carnet , String carac , int n) {
       int position = -1;
+
       do{
          position = carnet.indexOf(carac,position+1);
       } while(n-- > 0 && position != -1);
+
       return position;
    }
 
@@ -549,16 +568,21 @@ public class TP2Utils {
     * le nouveau contact
     *
     * @param carnet le carnet de contact qu'on suppose deja formaté
-    * @param position la position du caractère ou on va couper la chaine
+    * @param ligne la position du caractère ou on va couper la chaine
     * @param hautOuBas Si 0 , va decouper carnet du caractère 0 jusqu'à position
     *                  Si 1 , va decouper carnet du caractère position+1 à la
     *                  fin de la chaine carnet.
     * @return tout les elements du carnet au dessus (hautOuBas = 0) ou en bas
     *         (hautOuBas = 1) du nouveau contact
     */
-   private static String decouperCarnet(String carnet, int position, int hautOuBas) {
+   private static String decouperCarnet(String carnet, int ligne, int hautOuBas) {
 
-      int nieme = obtenirIndexNiemeChar(carnet,"\n",position-1)+1;
+      /*
+       * Puisque '\n' contient deux caractères, on ajoute 1 à nieme pour
+       * pouvoir découper le carnet apres la fin complete de la ligne
+       * soit apres le '\n'.
+       */
+      int nieme = obtenirIndexNiemeChar(carnet,"\n",ligne-1)+1;
       String res = "";
 
       switch (hautOuBas) {
@@ -621,7 +645,7 @@ public class TP2Utils {
       int debut = 0;
       int fin = carnet.length-1;
 
-      //Continue a chercher tant que les  index de debut et de fin
+      //Continue a chercher tant que les index de debut et de fin
       //ne se croise pas
       while(debut <= fin && reponse == -1) {
          idDebut = obtenirIdEntier(carnet[debut]);
@@ -677,16 +701,5 @@ public class TP2Utils {
       }
 
       return carnet;
-   }
-
-   /**
-    *Cette méthode compte le nombre de contact dans le carnet
-    *
-    * @param carnet le carnet ou il faut compter le nombre de lignes
-    * @return le nombre de ligne dans le carnet
-    */
-   public static int compterNombreDeLignes(String carnet){
-      String[] lignes = carnet.split("\n");
-      return  lignes.length;
    }
 }

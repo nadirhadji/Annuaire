@@ -37,6 +37,20 @@ public class TesteUtils {
     }
 
     @Test
+    public void neContientQueDesChiffresFalse4() {
+        String chaine = "";
+        boolean reponse = TP2Utils.neContientQueDesChiffres(chaine);
+        Assert.assertFalse(reponse);
+    }
+
+    @Test
+    public void neContientQueDesChiffresFalse5() {
+        String chaine = null;
+        boolean reponse = TP2Utils.neContientQueDesChiffres(chaine);
+        Assert.assertFalse(reponse);
+    }
+
+    @Test
     public void contientNCar0() {
         String chaine = "abcdefg";
         char car = 'h';
@@ -51,7 +65,6 @@ public class TesteUtils {
         char car = 'g';
         int reponse = TP2Utils.contientNCar(chaine,car);
         Assert.assertEquals(1,reponse);
-
     }
 
     @Test

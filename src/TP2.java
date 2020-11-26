@@ -428,14 +428,12 @@ public class TP2 {
 
       String idContactString;
       int idContactInt;
-      int nbContactDansCarnet;
 
       if (carnet.isEmpty())
          System.out.println(MSG_CARNET_VIDE);
       else {
-         nbContactDansCarnet = TP2Utils.compterNombreDeLignes(carnet);
          idContactInt = validerEntier(MSG_SOLL_ID_CONTACT, MSG_ERR_ID_CONTACT,
-                 0, nbContactDansCarnet);
+                 0,999);
          idContactString = String.valueOf(idContactInt);
          carnet = TP2Utils.supprimerCeContactDuCarnet(idContactString, carnet);
       }
