@@ -1,3 +1,4 @@
+import java.util.StringTokenizer;
 
 public class TP2 {
    
@@ -175,14 +176,24 @@ public class TP2 {
     * @return le choix de menu valide saisi par l'utilisateur.
     * 
     * NOTES TP2 : 
-    *    - Les valeurs valides pour le menu sont contenues dans la chaine 
+    *    - Les valeurs valides pour le menu sont contenues dans la chaine
     *      CHOIX_MENUS_VALIDES, et vous devez utiliser cette constante.
     * 
     *    - Cette methode DOIT utiliser la methode validerChaine.
     */
    public static String validerMenu() {
-      //METHODE A COMPLETER
-      return null;  //pour compilation (a modifer)
+
+      String choixMenu;
+      boolean premiereExecution = true;
+
+      do {
+         if (!premiereExecution)
+            System.out.println(MSG_ERR_MENU);
+         premiereExecution = false;
+         choixMenu = validerChaine(MSG_SOLL_MENU,MSG_ERR_MENU,1,1);
+      } while(!CHOIX_MENUS_VALIDES.contains(choixMenu));
+
+      return choixMenu;
    }
    
    
@@ -210,8 +221,26 @@ public class TP2 {
     *      classe.
     */
    public static String validerTelephone() {
-      //METHODE A COMPLETER
-      return null;  //pour compilation (a modifer)
+
+      String numeroTelephone;
+      boolean queDesChiffres;
+      boolean contient10carac;
+      boolean contient0carac;
+      boolean erreurDeSaisie;
+      boolean premiereExecution = true;
+
+      do {
+         if (!premiereExecution)
+            System.out.println(MSG_ERR_TEL);
+         premiereExecution = false;
+         numeroTelephone = validerChaine(MSG_SOLL_TEL,MSG_ERR_TEL,0,10);
+         contient10carac = numeroTelephone.matches("[0-9]{10}");
+         contient0carac = numeroTelephone.isEmpty();
+         queDesChiffres = TP2Utils.neContientQueDesChiffres(numeroTelephone);
+         erreurDeSaisie = !(contient0carac || (contient10carac && queDesChiffres));
+      } while ( erreurDeSaisie );
+
+      return numeroTelephone;
    } 
    
    /**
@@ -246,8 +275,36 @@ public class TP2 {
     *      classe.
     */
    public static String validerCourriel() {
-      //METHODE A COMPLETER
-      return null;  //pour compilation (a modifer)
+
+      String courriel;
+      boolean premiereExecution = true;
+      boolean erreurDeSaisie;
+      boolean estAlphaNumPlus;
+      boolean courrielVide;
+      int nbCarac;
+      int nbPoints;
+      int nbArrobase;
+
+      do {
+         if (!premiereExecution)
+            System.out.println(MSG_ERR_COURRIEL);
+         premiereExecution = false;
+         courriel = validerChaine(MSG_SOLL_COURRIEL,MSG_ERR_COURRIEL,0,50);
+         estAlphaNumPlus = TP2Utils.estAlphaNumPlus(courriel,"_.@");
+         nbPoints = TP2Utils.contientNCar(courriel,'.');
+         nbArrobase = TP2Utils.contientNCar(courriel,'@');
+         courrielVide = courriel.isEmpty();
+         nbCarac = courriel.length();
+         erreurDeSaisie = ! ( courrielVide  ||
+                                ( estAlphaNumPlus &&
+                                  (nbPoints > 0) &&
+                                  (nbArrobase == 1) &&
+                                  (nbCarac > 4)
+                                )
+                            );
+      } while(erreurDeSaisie);
+
+      return courriel;
    }
    
    /*****************************************
@@ -278,7 +335,7 @@ public class TP2 {
     * 
     *    Lorsque le carnet n'est pas vide :
     *    - La chaine doit contenir un seul contact par ligne
-    *    - Une ligne representant un contact (contact-ligne) doit être formee 
+    *    - Une ligne representant un contact (contact-ligne) doit être formee
     *      comme suit :
     *            id|nom|prenom|courriel|telephone 
     * 
@@ -313,8 +370,23 @@ public class TP2 {
     * 
     */
    public static String ajouterContact(int idContact, String carnet) {
-      //METHODE A COMPLETER
-      return null;  //pour compilation (a modifer)
+
+      String contactLigne;
+      String reponse;
+
+      String nom = validerChaine(MSG_SOLL_NOM,MSG_ERR_NOM,1,30);
+      String prenom = validerChaine(MSG_SOLL_PRENOM,MSG_ERR_PRENOM,1,30);
+      String courriel = validerCourriel();
+      String telephone = validerTelephone();
+      contactLigne = TP2Utils.formaterContactSurUneLigne(idContact,
+                                                         nom,
+                                                         prenom,
+                                                         courriel,
+                                                         telephone);
+      contactLigne = contactLigne + "\n";
+      reponse = TP2Utils.insererCeContactDansCarnet(carnet,contactLigne);
+
+      return reponse;
    }
    
    /**
@@ -353,8 +425,22 @@ public class TP2 {
     *          - supprimerCeContactDuCarnet(...) - pour supprimer ce contact
     */
    public static String supprimerContact (String carnet) {
-      //METHODE A COMPLETER
-      return null;  //pour compilation (a modifer)
+
+      String idContactString;
+      int idContactInt;
+      int nbContactDansCarnet;
+
+      if (carnet.isEmpty())
+         System.out.println(MSG_CARNET_VIDE);
+      else {
+         nbContactDansCarnet = TP2Utils.compterNombreDeLignes(carnet);
+         idContactInt = validerEntier(MSG_SOLL_ID_CONTACT, MSG_ERR_ID_CONTACT,
+                 0, nbContactDansCarnet);
+         idContactString = String.valueOf(idContactInt);
+         carnet = TP2Utils.supprimerCeContactDuCarnet(idContactString, carnet);
+      }
+
+      return carnet;
    }
    
    /**
@@ -406,7 +492,24 @@ public class TP2 {
     * 
     */
    public static void afficherTousLesContacts (String carnet) {
-      //METHODE A COMPLETER
+
+      StringBuilder reponse;
+      StringTokenizer tokens;
+      String token;
+
+      if(carnet.isEmpty())
+         System.out.println(MSG_CARNET_VIDE);
+      else {
+         tokens = new StringTokenizer(carnet, "\n");
+         reponse = new StringBuilder();
+
+         while (tokens.hasMoreElements()){
+            token = tokens.nextToken();
+            reponse.append(TP2Utils.formaterContact(token));
+         }
+
+         System.out.println(reponse.toString());
+      }
    }
    
    /**
@@ -456,5 +559,4 @@ public class TP2 {
       
       afficherFinProg();
    }
-   
 }

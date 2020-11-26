@@ -1,7 +1,7 @@
 import org.junit.Assert;
 import org.junit.Test;
 
-public class EstAlphaNumPlus {
+public class TesteEstAlphaNumPlus {
 
     @Test
     public void estAlphaNumPlus() {

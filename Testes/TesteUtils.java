@@ -78,4 +78,26 @@ public class TesteUtils {
         int reponse = TP2Utils.contientNCar(chaine,car);
         Assert.assertEquals(0,reponse);
     }
+
+    @Test
+    public void formaterTelephone0() {
+        String chaine = "8888888888";
+        String reponse = TP2Utils.formaterTelephone(chaine);
+        Assert.assertEquals("(888) 888-8888",reponse);
+    }
+
+    @Test
+    public void formaterTelephone1() {
+        String chaine = "5146543456";
+        String reponse = TP2Utils.formaterTelephone(chaine);
+        Assert.assertEquals("(514) 654-3456",reponse);
+    }
+
+    //teste insererCeContactDansCarnet
+    String carnet = "3|Crevier|Simon|simon@gmail.com|5145678988\n" +
+            "1|Douglas|Sylvie|AUCUN|4507461234\n" +
+            "2|Dumoulin|Fred|fredd@yahoo.ca|8196778234\n" +
+            "4|Girard|Myriam|AUCUN|AUCUN\n";
+
+    String ligne =  "6|Girard|Myriam|AUCUN|AUCUN\n";
 }
