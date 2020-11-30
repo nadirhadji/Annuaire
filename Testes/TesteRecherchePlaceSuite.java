@@ -33,85 +33,85 @@ public class TesteRecherchePlaceSuite {
 
     @Test
     public void obtenirNumLigneOuInsererContactA() {
-        int reponse = TP2Utils.recherchePlace('A',carnet);
+        int reponse = TP2Utils.recherchePositionParNom('A',carnet);
         Assert.assertEquals(2,reponse);
     }
 
     @Test
     public void obtenirNumLigneOuInsererContactB() {
-        int reponse = TP2Utils.recherchePlace('B',carnet);
+        int reponse = TP2Utils.recherchePositionParNom('B',carnet);
         Assert.assertEquals(5,reponse);
     }
 
     @Test
     public void obtenirNumLigneOuInsererContactC() {
-        int reponse = TP2Utils.recherchePlace('C',carnet);
+        int reponse = TP2Utils.recherchePositionParNom('C',carnet);
         Assert.assertEquals(8,reponse);
     }
 
     @Test
     public void obtenirNumLigneOuInsererContactD() {
-        int reponse = TP2Utils.recherchePlace('D',carnet);
+        int reponse = TP2Utils.recherchePositionParNom('D',carnet);
         Assert.assertEquals(9,reponse);
     }
 
     @Test
     public void obtenirNumLigneOuInsererContactE() {
-        int reponse = TP2Utils.recherchePlace('E',carnet);
+        int reponse = TP2Utils.recherchePositionParNom('E',carnet);
         Assert.assertEquals(9,reponse);
     }
 
     @Test
     public void obtenirNumLigneOuInsererContactF() {
-        int reponse = TP2Utils.recherchePlace('F',carnet);
+        int reponse = TP2Utils.recherchePositionParNom('F',carnet);
         Assert.assertEquals(10,reponse);
     }
 
     @Test
     public void obtenirNumLigneOuInsererContactG() {
-        int reponse = TP2Utils.recherchePlace('G',carnet);
+        int reponse = TP2Utils.recherchePositionParNom('G',carnet);
         Assert.assertEquals(10,reponse);
     }
 
     @Test
     public void obtenirNumLigneOuInsererContactI() {
-        int reponse = TP2Utils.recherchePlace('I',carnet);
+        int reponse = TP2Utils.recherchePositionParNom('I',carnet);
         Assert.assertEquals(12,reponse);
     }
 
     @Test
     public void obtenirNumLigneOuInsererContactJ() {
-        int reponse = TP2Utils.recherchePlace('J',carnet);
+        int reponse = TP2Utils.recherchePositionParNom('J',carnet);
         Assert.assertEquals(14,reponse);
     }
 
     @Test
     public void obtenirNumLigneOuInsererContactK() {
-        int reponse = TP2Utils.recherchePlace('K',carnet);
+        int reponse = TP2Utils.recherchePositionParNom('K',carnet);
         Assert.assertEquals(15,reponse);
     }
 
     @Test
     public void obtenirNumLigneOuInsererContactL() {
-        int reponse = TP2Utils.recherchePlace('L',carnet);
+        int reponse = TP2Utils.recherchePositionParNom('L',carnet);
         Assert.assertEquals(17,reponse);
     }
 
     @Test
     public void obtenirNumLigneOuInsererContactN() {
-        int reponse = TP2Utils.recherchePlace('N',carnet);
+        int reponse = TP2Utils.recherchePositionParNom('N',carnet);
         Assert.assertEquals(19,reponse);
     }
 
     @Test
     public void obtenirNumLigneOuInsererContactQ() {
-        int reponse = TP2Utils.recherchePlace('Q',carnet);
+        int reponse = TP2Utils.recherchePositionParNom('Q',carnet);
         Assert.assertEquals(24,reponse);
     }
 
     @Test
     public void obtenirNumLigneOuInsererContactZ() {
-        int reponse = TP2Utils.recherchePlace('Z',carnet);
+        int reponse = TP2Utils.recherchePositionParNom('Z',carnet);
         Assert.assertEquals(24,reponse);
     }
 }

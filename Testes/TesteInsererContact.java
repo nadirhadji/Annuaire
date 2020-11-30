@@ -3,10 +3,7 @@ import org.junit.Test;
 
 public class TesteInsererContact {
 
-    String rawCarnet =  "0|Arevier|Simon|simon@gmail.com|5145678988\n"+
-                        "1|Aumoulin|Fred|fredd@yahoo.ca|8196778234\n"+
-                        "2|Aouglas|Sylvie|AUCUN|4507461234\n"+
-                        "3|Birard|Myriam|AUCUN|AUCUN\n"+
+    String rawCarnet = "3|Birard|Myriam|AUCUN|AUCUN\n"+
                         "4|Birard|Myriam|AUCUN|AUCUN\n"+
                         "5|Birard|Myriam|AUCUN|AUCUN\n"+
                         "6|Cirard|Myriam|AUCUN|AUCUN\n"+
@@ -28,9 +25,7 @@ public class TesteInsererContact {
                         "22|Pirard|Myriam|AUCUN|AUCUN\n"+
                         "23|Pirard|Myriam|AUCUN|AUCUN\n";
 
-    String expected1 =  "0|Arevier|Simon|simon@gmail.com|5145678988\n"+
-                        "1|Aumoulin|Fred|fredd@yahoo.ca|8196778234\n"+
-                        "2|Aouglas|Sylvie|AUCUN|4507461234\n"+
+    String expected1 =  "18|Alard|Myriam|AUCUN|AUCUN\n"+
                         "3|Birard|Myriam|AUCUN|AUCUN\n"+
                         "4|Birard|Myriam|AUCUN|AUCUN\n"+
                         "5|Birard|Myriam|AUCUN|AUCUN\n"+
@@ -88,33 +83,6 @@ public class TesteInsererContact {
 
     String carnetDeuxContact = "18|Mirard|Myriam|AUCUN|AUCUN\n"+
                                 "18|Mirard|Myriam|AUCUN|AUCUN\n";
-
-    @Test
-    public void inserer() {
-        String res = TP2Utils.insererCeContactDansCarnet(rawCarnet,
-                                            "18|Mirard|Myriam|AUCUN|AUCUN\n");
-        Assert.assertEquals(expected1,res);
-    }
-
-    @Test
-    public void inserer2() {
-        String res = TP2Utils.insererCeContactDansCarnet(rawCarnet,
-                "18|Mirard|Myriam|AUCUN|AUCUN\n");
-
-        String res2 = TP2Utils.insererCeContactDansCarnet(res,
-                "18|Airard|Myriam|AUCUN|AUCUN\n");
-
-        String res3 = TP2Utils.insererCeContactDansCarnet(res2,
-                "18|Qirard|Myriam|AUCUN|AUCUN\n");
-
-        String res4 = TP2Utils.insererCeContactDansCarnet(res3,
-                "18|Zirard|Myriam|AUCUN|AUCUN\n");
-
-        String res5 = TP2Utils.insererCeContactDansCarnet(res4,
-                "18|Oirard|Myriam|AUCUN|AUCUN\n");
-
-        Assert.assertEquals(expected2,res5);
-    }
 
     @Test
     public void inserer3() {

@@ -1,5 +1,11 @@
 import java.util.StringTokenizer;
 
+ /**********************************************************
+ *  * U Q A M   -   I N F 1 1 2 0
+ *  *
+ *  * Hadji Nadir (fc191918@ens.uqam.ca)
+ *  * HADN08069703
+ **********************************************************/
 public class TP2 {
    
    /***********************
@@ -44,7 +50,9 @@ public class TP2 {
    public final static String MSG_ENTER = "Appuyez sur [ENTREE] pour continuer...";
    public final static String MSG_FIN_PROG = "FIN NORMALE DU PROGRAMME.";
    public final static String MSG_CARNET_VIDE = "Le carnet ne contient aucun contact.";
-   
+   public final static String MSG_ENTETE_CARNET = "--------------------\n" +
+                                                  "CARNET DE CONTACTS\n" +
+                                                  "--------------------\n\n";
    /*******************************
     * METHODES D'AFFICHAGE
     *******************************/
@@ -195,8 +203,7 @@ public class TP2 {
 
       return choixMenu;
    }
-   
-   
+
    /**
     * Cette methode sert a valider un numero de telephone. Elle demande d'abord
     * a l'utilisateur d'entrer un numero de telephone (MSG_SOLL_TEL), et tant que
@@ -433,7 +440,7 @@ public class TP2 {
          System.out.println(MSG_CARNET_VIDE);
       else {
          idContactInt = validerEntier(MSG_SOLL_ID_CONTACT, MSG_ERR_ID_CONTACT,
-                 0,999);
+                 1,999);
          idContactString = String.valueOf(idContactInt);
          carnet = TP2Utils.supprimerCeContactDuCarnet(idContactString, carnet);
       }
@@ -491,23 +498,24 @@ public class TP2 {
     */
    public static void afficherTousLesContacts (String carnet) {
 
-      StringBuilder reponse;
+      StringBuilder reponse = new StringBuilder();
       StringTokenizer tokens;
       String token;
 
+      reponse.append(MSG_ENTETE_CARNET);
+
       if(carnet.isEmpty())
-         System.out.println(MSG_CARNET_VIDE);
+         reponse.append(MSG_CARNET_VIDE+"\n");
       else {
          tokens = new StringTokenizer(carnet, "\n");
-         reponse = new StringBuilder();
 
          while (tokens.hasMoreElements()){
             token = tokens.nextToken();
-            reponse.append(TP2Utils.formaterContact(token));
+            reponse.append(TP2Utils.formaterContact(token)+"\n");
          }
-
-         System.out.println(reponse.toString());
       }
+
+      System.out.println(reponse.toString());
    }
    
    /**

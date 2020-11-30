@@ -1,5 +1,11 @@
 import java.util.StringTokenizer;
 
+/**********************************************************
+ *  * U Q A M   -   I N F 1 1 2 0
+ *  *
+ *  * Hadji Nadir (fc191918@ens.uqam.ca)
+ *  * HADN08069703
+ **********************************************************/
 public class TP2Utils {
    
    public final static String SEPARATEUR_INFO_CONTACT = "|";
@@ -246,6 +252,37 @@ public class TP2Utils {
       return reponse;
    }
 
+   /***************************************************
+    * METHODES D'OBTENTION D'INFORMATION SUR UN CONTACT
+    ***************************************************/
+
+   /** Cette methode recoit en parametre un contact-ligne et la position
+    * de l'information a obtenir parmi la ligne.
+    *
+    * Exemple : obtenirInfoAvecPosition(2,"3|lord|melanie|aucun|aucun")
+    * doit retourner melanie car troisième element de la chaine de caractère
+    * en commancant par 0 séparé par des "|".
+    *
+    * @param position la position de l'information a récuperer dans contactLigne
+    *                 (O etant le premier element).
+    * @param contactLigne le contact dont on veut obtenir une information.
+    *             ANTECEDENT :  On suppose contactLigne non null, non vide et
+    *                           bien forme. Voir la documentation de la methode
+    *                           formaterContactSurUneLigne de cette classe pour
+    *                           savoir ce qu'est un contact-ligne bien forme.
+    * @return l'information du contactLigne donne en parametre.
+    */
+   private static String obtenirInfoAvecPosition(int position , String contactLigne){
+      String reponse = "";
+      byte compteur = 0;
+      StringTokenizer tokens = new StringTokenizer(contactLigne,"|");
+      while(tokens.hasMoreElements() && compteur <= position ) {
+         reponse = tokens.nextToken();
+         compteur++;
+      }
+      return reponse;
+   }
+
     /**
     * Cette methode recoit en parametre un contact-ligne et retourne 
     * l'id de ce contact sous forme de chaine de caracteres.
@@ -323,32 +360,9 @@ public class TP2Utils {
       return obtenirInfoAvecPosition(4,contactLigne);
    }
 
-   /** Cette methode recoit en parametre un contact-ligne et la position
-    * de l'information a obtenir parmi la ligne.
-    *
-    * Exemple : obtenirInfoAvecPosition(2,"3|lord|melanie|aucun|aucun")
-    * doit retourner melanie car troisième element de la chaine de caractère
-    * en commancant par 0 séparé par des "|".
-    *
-    * @param position la position de l'information a récuperer dans contactLigne
-    *                 (O etant le premier element).
-    * @param contactLigne le contact dont on veut obtenir une information.
-    *             ANTECEDENT :  On suppose contactLigne non null, non vide et
-    *                           bien forme. Voir la documentation de la methode
-    *                           formaterContactSurUneLigne de cette classe pour
-    *                           savoir ce qu'est un contact-ligne bien forme.
-    * @return l'information du contactLigne donne en parametre.
-    */
-   private static String obtenirInfoAvecPosition(int position , String contactLigne){
-      String reponse = "";
-      byte compteur = 0;
-      StringTokenizer tokens = new StringTokenizer(contactLigne,"|");
-      while(tokens.hasMoreElements() && compteur <= position ) {
-         reponse = tokens.nextToken();
-         compteur++;
-      }
-      return reponse;
-   }
+   /*******************************
+    * METHODES DE FORMATAGE
+    *******************************/
    
    /**
     * Cette methode formate le tel donne de cette maniere : (450) 123-4567.
@@ -449,6 +463,10 @@ public class TP2Utils {
       return builder.toString();
    }
 
+   /*******************************
+    * METHODES D'INSERTION
+    *******************************/
+
    /**
     * Cette methode insere le contactLigne donne dans le carnet donne. Le contact
     * doit etre insere en respectant l'ordre alphabetique des noms de famille
@@ -492,43 +510,45 @@ public class TP2Utils {
       else {
          char lettreDeNom = obtenirLettreDeNom(contactLigne);
          String[] tabCarnet = carnet.split("\n");
-         int place = recherchePlace(lettreDeNom,tabCarnet);
-         String hautDuCarnet = decouperCarnet(carnet,place,0);
-         String basDuCarnet = decouperCarnet(carnet,place,1);
-         carnet = hautDuCarnet + contactLigne + basDuCarnet;
+         int position = recherchePositionParNom(lettreDeNom,tabCarnet);
+         carnet = nouvelleInsertion(carnet,contactLigne,tabCarnet.length,position);
       }
 
       return carnet;
    }
 
    /**
-    * Cette methode trouve le numero de la ligne apres quoi inserer
-    * le contact. Carnet etant un tableau triée par ordre alphabétique
-    * des noms de contact, cette methode trouve la postion de la ligne
-    * avant quoi le nouveau contact doit etre inseré.
+    * Cette méthode applique une recherche dichotomique sur une liste triée
+    * par ordre alphabétique de noms de contacts. Elle à pour but de trouver
+    * la position éxacte à laquelle devra etre inseré un nouveau contact
+    * dans le carnet.
     *
     * @param lettre la premiere lettre du nom du nouveau contact
-    * @param carnet le carnet de contact qu'on va supposer deja
-    *               bien formaté. Lire documentation de la methode
-    *               formaterContactSurUneLigne pour en savoir plus
-    *               sur le format de chaque ligne su carnet.
+    * @param carnet Une liste de string contenant a chaque case
+    *               une ligne de contact complete qu'on suppose
+    *               bien formaté.
     *
-    * @return un entier qui représente le numero de ligne avant
-    * quoi on doit etre inséré le nouveau contact.
+    * @return La position exacte à laquelle le nouveau contact doit etre inséré
+    * Si le retour est 0 : le contact devra etre inseré au tout début du carnet
+    * Si le retour est egale au nombre d'element du carnet, le contact devra
+    * étre inséré à la toute fin du carnet.
+    * Sinon, le nouveau contact prend la place de l'ancien et l'ancien ce vera
+    * décalé d'une position à droite (voire doc de nouveauCarnet).
     */
-   public static int recherchePlace(char lettre, String[] carnet) {
+   public static int recherchePositionParNom(char lettre, String[] carnet) {
 
       int gauche = 0;
       int droite = carnet.length - 1;
       int milieu;
+      char charCourant;
 
       while (gauche <= droite) {
          milieu = (gauche + droite) / 2;
-         char car = obtenirLettreDeNom(carnet[milieu]);
+         charCourant = obtenirLettreDeNom(carnet[milieu]);
 
-         if(lettre < car)
+         if(lettre < charCourant)
             droite = milieu - 1;
-         else if (lettre > car)
+         else if (lettre > charCourant)
             gauche = milieu + 1;
          else
             return milieu;
@@ -537,63 +557,71 @@ public class TP2Utils {
    }
 
    /**
-    * Cette methode retourne l'index du N'ième(n) caractere(carac) rencontré
-    * dans la chaine de caractère carnet. Elle sera utilisé pour trouver
-    * la position du n'ième "\n" trouvé dans la chaine carnet. Le retour de
-    * cette methode sera utilisé par la méthode decouperCarnet afin de
-    * découper le carnet a la bonne ligne et recréer un carnet incluant le
-    * nouveau contact.
+    * Cette méthode trouve l'index du dernier caractère de la ligne donnée
+    * en argument.
     *
-    * @param carnet la chaine de caractère dans quoi faire la recherche
-    * @param carac le caractère qui doit etre rencontré dans la chaine
-    * @param n la nième fois ou carac doit etre rencontré
-    * @return la position du nième (carac) dans (carnet).
-    *         Si carac n'est pas présent dans carnet la methode retourne
-    *         -1.
+    * @param carnet le carnet de contact
+    * @param position le numéro de la ligne dans le carnet qu'on va
+    *                 supposer plus grand ou égale à 1.
+    * @return l'index du dernier caractères à la ligne donnée en
+    * argument.
     */
-   private static int obtenirIndexNiemeChar(String carnet , String carac , int n) {
-      int position = -1;
-
-      do{
-         position = carnet.indexOf(carac,position+1);
-      } while(n-- > 0 && position != -1);
-
-      return position;
+   private static int obtenirIndexDecoupeCarnet(String carnet, int position) {
+      int index = -1;
+      /*
+       * Puisque la methode indexOf("\n",0) retourne l'index du premier
+       * retour à la ligne, on décremente position de 1.
+       * Exemple : si on veux retrouver l'index du dernier caractère à la
+       * ligne #3 , on passe en argument 2 à la méthode indexOf("\n",2)
+       * car celle-ci commence à compter depuis 0.
+       */
+      position = position-1;
+      do {
+         index = carnet.indexOf("\n",index+1);
+      } while(position-- > 0 && index != -1);
+      /*
+       * Puisque "\n" contient deux caractères, et qu'on veux d'index
+       * de fin de ligne, on incrémente le resultat de index de 1 pour
+       * que cette méthode retourne bien l'index de fin de ligne.
+       */
+      return index+1;
    }
 
    /**
-    * Cette methode decoupe le carnet de contact et renvoie l'ensemble des lignes
-    * au dessus ou en dessous du nouveau contatct. Elle sera appelé deux fois par
-    * la methode insererContactDansCarnet afin de créer un nouveau carnet incluant
-    * le nouveau contact
-    *
-    * @param carnet le carnet de contact qu'on suppose deja formaté
-    * @param ligne la position du caractère ou on va couper la chaine
-    * @param hautOuBas Si 0 , va decouper carnet du caractère 0 jusqu'à position
-    *                  Si 1 , va decouper carnet du caractère position+1 à la
-    *                  fin de la chaine carnet.
-    * @return tout les elements du carnet au dessus (hautOuBas = 0) ou en bas
-    *         (hautOuBas = 1) du nouveau contact
+     * Cette methode ajoute un contact au carnet de contact. Pour faire cela, elle
+     * peut procéder de 3 maniere dépendement de la position du nouveau contact.
+     * Si position = 0 , alors on place le nouveau contact au tout debut du carnet.
+     *                    Si position = nombre de contact, le nouveau contact devra
+     *                    etre ajouté à la toute fin du carnet.
+     *                    Sinon, on va découper le carnet du début jusqu'à l'index
+     *                    de découpe (voire doc de la méthode
+    *                     obtenirIndexDecoupeCarnet pour plus de détail).
+     *                    On va ensuite concatener la nouvelle ligne de contact pour
+     *                    enfin concatener la suite du carnet allant de l'index de
+     *                    decoupe jusqu'à la fin du carnet.
+     *
+     * @param carnet le carnet initale à transformer
+     * @param contactLigne le nouveau conctact à ajouter dans le carnet
+     * @param position la position du nouveau contact dans le carnet
+     * @return le nouveau carnet conteant le nouveau contact
     */
-   private static String decouperCarnet(String carnet, int ligne, int hautOuBas) {
+   private static String nouvelleInsertion(String carnet,String contactLigne,
+                                       int nbContact,int position) {
 
-      /*
-       * Puisque '\n' contient deux caractères, on ajoute 1 à nieme pour
-       * pouvoir découper le carnet apres la fin complete de la ligne
-       * soit apres le '\n'.
-       */
-      int nieme = obtenirIndexNiemeChar(carnet,"\n",ligne-1)+1;
-      String res = "";
+      String nouveauCarnet;
 
-      switch (hautOuBas) {
-         case 0 :
-            res = carnet.substring(0,nieme);
-            break;
-         case 1 :
-            res = carnet.substring(nieme);
-            break;
+      if(position == 0)
+         nouveauCarnet = contactLigne + carnet;
+      else if (position == nbContact)
+         nouveauCarnet = carnet + contactLigne;
+      else {
+         int indexDeDecouper = obtenirIndexDecoupeCarnet(carnet,position);
+         String gauche = carnet.substring(0,indexDeDecouper);
+         String droite = carnet.substring(indexDeDecouper);
+         nouveauCarnet = gauche + contactLigne + droite;
       }
-      return res;
+
+      return nouveauCarnet;
    }
 
    /**
@@ -610,6 +638,78 @@ public class TP2Utils {
               .substring(0,1)
               .toUpperCase()
               .charAt(0);
+   }
+
+   /*******************************
+    * METHODES DE SUPPRESSION
+    *******************************/
+
+   /**
+    * Cette methode supprime du carnet donne le contact ayant comme id le
+    * idContact donne. Si le contact existe dans le carnet, la methode supprime
+    * le contact du carnet. Si le contact n'existe pas dans le carnet,
+    * la methode ne modifie pas le carnet.
+    *
+    * @param idContact le no d'identification du contact a supprimer du carnet.
+    * @param carnet le carnet dans lequel on veut supprimer le contact ayant
+    *               le idContact donne.
+    *               ANTECEDENTS : - On suppose carnet NON NULL (mais peut être
+    *                               vide).
+    *                             - Si non vide, on suppose le carnet bien
+    *                               forme. Voir la documentation de la methode
+    *                               ajouterContact de la classe TP2 pour la
+    *                               description de ce qu'est un carnet bien
+    *                               forme.
+    * @return une nouvelle chaine de caracteres representant le carnet APRES
+    *         la suppression (ou le carnet inchange si la suppression n'a
+    *         pas eu lieu).
+    *
+    * NOTES TP2 :
+    *    - Cette methode DOIT utiliser la methode obtenirIdContact(...) de cette
+    *      classe.
+    *
+    */
+   public static String supprimerCeContactDuCarnet (String idContact, String carnet) {
+
+      String[] tabCarnet = carnet.split("\n");
+      int id = Integer.parseInt(idContact);
+      int position = obtenirPositionParId(id,tabCarnet);
+
+      if(position != -1)
+         carnet = nouvelleSuppression(carnet,position);
+
+      return carnet;
+   }
+
+   /**
+    * Cette methode supprime une ligne dans un carnet qu'on suppose déja bien
+    * formaté. Pour faire cela, cette méthode trouve l'index du dernier
+    * caractère qui se trouve avant la ligne à supprimer et l'index du premier
+    * caractère qui suit la ligne à supprimer. Avec ces deux informations, on
+    * extrait deux sous chaine qui une fois concatèné l'une à l'autre formeront
+    * un nouveau carnet excluant le contact à la ligne 'contactLigne'
+    *
+    * @param carnet Le carnet de contact
+    * @param contactLigne La position de la ligne qui devra etre supprimée
+    * @return Le nouveau carnet excluant la ligne passé en argument
+    */
+   private static String nouvelleSuppression(String carnet, int contactLigne) {
+
+      String res = "";
+      int indexSousChaineHaut;
+      int indexSousChaineBas;
+
+      if(contactLigne == 0){
+         indexSousChaineBas = obtenirIndexDecoupeCarnet(carnet,1);
+         res = carnet.substring(indexSousChaineBas);
+      } else if (contactLigne > 0) {
+         indexSousChaineHaut = obtenirIndexDecoupeCarnet(carnet,contactLigne);
+         res = carnet.substring(0,indexSousChaineHaut);
+         indexSousChaineBas = obtenirIndexDecoupeCarnet(carnet,contactLigne+1);
+         res = res + carnet.substring(indexSousChaineBas);
+      }
+
+      return res;
    }
 
    /**
@@ -648,6 +748,7 @@ public class TP2Utils {
       //Continue a chercher tant que les index de debut et de fin
       //ne se croise pas
       while(debut <= fin && reponse == -1) {
+
          idDebut = obtenirIdEntier(carnet[debut]);
          idFin = obtenirIdEntier(carnet[fin]);
 
@@ -655,51 +756,11 @@ public class TP2Utils {
             reponse = debut;
          else if (id == idFin)
             reponse = fin;
+
          debut++;
          fin--;
       }
+
       return reponse;
-   }
-
-   /**
-    * Cette methode supprime du carnet donne le contact ayant comme id le 
-    * idContact donne. Si le contact existe dans le carnet, la methode supprime 
-    * le contact du carnet. Si le contact n'existe pas dans le carnet, 
-    * la methode ne modifie pas le carnet.
-    * 
-    * @param idContact le no d'identification du contact a supprimer du carnet.
-    * @param carnet le carnet dans lequel on veut supprimer le contact ayant
-    *               le idContact donne.
-    *               ANTECEDENTS : - On suppose carnet NON NULL (mais peut être 
-    *                               vide).
-    *                             - Si non vide, on suppose le carnet bien 
-    *                               forme. Voir la documentation de la methode
-    *                               ajouterContact de la classe TP2 pour la 
-    *                               description de ce qu'est un carnet bien 
-    *                               forme.
-    * @return une nouvelle chaine de caracteres representant le carnet APRES 
-    *         la suppression (ou le carnet inchange si la suppression n'a 
-    *         pas eu lieu).
-    * 
-    * NOTES TP2 : 
-    *    - Cette methode DOIT utiliser la methode obtenirIdContact(...) de cette
-    *      classe. 
-    * 
-    */                                     
-   public static String supprimerCeContactDuCarnet (String idContact, String carnet) {
-
-      String[] tabCarnet = carnet.split("\n");
-      int id = Integer.parseInt(idContact);
-      int position = obtenirPositionParId(id,tabCarnet);
-
-      if (position == 0 )
-         carnet = decouperCarnet(carnet,1,1);
-      else if(position > 0) {
-         String carnetSup = decouperCarnet(carnet,position,0);
-         String carnetInf = decouperCarnet(carnet,position+1,1);
-         carnet = carnetSup + carnetInf;
-      }
-
-      return carnet;
    }
 }
